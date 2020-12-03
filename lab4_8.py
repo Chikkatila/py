@@ -25,11 +25,12 @@ ip_list = []
 
 for idx in ip:
     b = int(idx)
-    ip_list.append(b)
+    ip_list.append(b) 
 print('{:<8}   {:<8}   {:<8}   {:<8}'.format(ip_list[0],ip_list[1],ip_list[2],ip_list[3],))
 print('{:08b}   {:08b}   {:08b}   {:08b}'.format(ip_list[0],ip_list[1],ip_list[2],ip_list[3],))
 
- 
+#print(type(ip_list)
+#print(type(ip_list[0]))
 
 
 
