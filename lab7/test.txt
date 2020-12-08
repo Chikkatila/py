@@ -1,0 +1,81 @@
+
+ : 2033 bytes
+!
+! Last configuration change at 13:11:59 UTC Thu Feb 25 2016
+!
+version 15.0
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname sw1
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+  auto
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 100
+ switchport mode trunk
+  auto
+ spanning-tree portfast edge trunk
+!
+interface Ethernet0/2
+  auto
+!         
+interface Ethernet0/3
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 100
+  auto
+ switchport mode trunk
+ spanning-tree portfast edge trunk
+!         
+interface Ethernet1/0
+  auto
+!
+interface Ethernet1/1
+  auto
+!
+interface Ethernet1/2
+  auto
+!
+interface Ethernet1/3
+  auto
+!
+interface Vlan100
+ ip address 10.0.100.1 255.255.255.0
+!
+!
+ configure sh do sh 
+ exec ospf sh run | s ^router ospf
+ exec bri show ip int bri | exc unass
+ exec id show int desc
+ exec top sh proc cpu sorted | excl 0.00%__0.00%__0.00%
+ exec c conf t
+ exec diff sh archive config differences nvram:startup-config system:running-config
+ exec shcr sh run | s ^crypto
+ exec desc sh int desc | ex down
+ exec bgp sh run | s ^router bgp
+ exec xc sh xconnect all
+ exec vc sh mpls l2tr vc
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input all
+!
+end
