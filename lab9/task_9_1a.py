@@ -41,8 +41,9 @@ access_config = {
 }
 
 
-intf_cfg = []
+
 def generate_access_config(intf_vlan_mapping, access_template, psecurity=None):
+    intf_cfg = []
     for intf_key, vlan_value in intf_vlan_mapping.items():
         #if "Ethernet" in intf_key:
             #intf_key = intf_key.replace('FastEthernet', 'interface FastEthernet')
@@ -58,8 +59,9 @@ def generate_access_config(intf_vlan_mapping, access_template, psecurity=None):
             if psecurity != None:
                 for psecurity_line in psecurity:
                   intf_cfg.append(psecurity_line)
+    return intf_cfg
         
-generate_access_config(access_config, access_mode_template, port_security_template)
-print(intf_cfg)
-generate_access_config(access_config, access_mode_template, port_security_template)
-print(intf_cfg)
+a = generate_access_config(access_config, access_mode_template, port_security_template)
+print(a)
+b = generate_access_config(access_config, access_mode_template)
+print(b)
