@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import subprocess
-import ipaddress
+
 
 '''
 Задание 12.1
@@ -20,8 +19,11 @@ import ipaddress
 '''
 
 
+import subprocess
+import ipaddress
 
-def ping_ip(ip_list):
+
+def ping_ip_addresses(ip_list):
     ip_ok_list = []
     ip_neok_list = []
     for ip in ip_list:
@@ -38,7 +40,7 @@ def ping_ip(ip_list):
 
 if __name__ == '__main__':
     ip = ['8.8.8.8', '77.88.8.8', '192.168.200.200']
-    result = ping_ip(ip)
+    result = ping_ip_addresses(ip)
     print(result)
 
 

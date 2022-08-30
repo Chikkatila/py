@@ -41,3 +41,33 @@ Cгенерировать топологию, которая соответст�
 
 '''
 
+import draw_network_graph
+
+def create_network_map(filenames):
+    cdp_neighbors = {}
+    for filename in filenames:
+        with open(filename) as f:
+            cdp_neighbors_list= f.readlines()
+            for index in cdp_neighbors_list:
+                if 'show cdp neighbors' in index:
+                    local_device, *rest = index.split('>')
+                elif index.startswith('R') or index.startswith('SW'):
+                    neighbor_device, local_int, local_int_number, *rest, neighbor_int, neighbor_int_number = index.split()
+                    if cdp_neighbors.get((neighbor_device, neighbor_int+neighbor_int_number)) == None:
+                        cdp_neighbors[(local_device,local_int+local_int_number)] = (neighbor_device, neighbor_int+neighbor_int_number)
+    return cdp_neighbors
+            
+
+
+
+
+
+
+
+
+cdp_files = ['sh_cdp_n_sw1.txt', 'sh_cdp_n_r1.txt', 'sh_cdp_n_r2.txt', 'sh_cdp_n_r3.txt']
+cdp_files_test = ['sh_cdp_n_r1.txt']
+
+a = create_network_map(cdp_files)
+#rint(a)
+draw_network_graph.draw_topology(a)

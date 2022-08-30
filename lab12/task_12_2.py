@@ -32,7 +32,7 @@
 '''
 
 
-import subprocess
+#import subprocess
 import ipaddress
 
 def convert_ranges_to_ip_list(ip_a):

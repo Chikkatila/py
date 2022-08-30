@@ -27,9 +27,8 @@ from tabulate import tabulate
 
 
 def print_ip_table(good_ip_list, bad_ip_list):
-    for a, b in good_ip_list, bad_ip_list:
-        if not b:
-            print('GOVNO')
+S
+        
     
 #    ip_list = []
 #    for good in good_ip_list:

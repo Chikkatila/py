@@ -41,9 +41,10 @@ def parse_cdp_neighbors(command_output):
         if 'show cdp neighbors' in output:
             local_device, *rest = output.split('>')
         elif output.startswith('R') or output.startswith('SW'):
-#            neighbor_device, local_int, _, _, _, _, neighbot_int = output.split('  ')
+            test = output.split('        ')
+            print(test)
             neighbor_device, local_int, *rest, neighbor_int = output.split('       ')
-            cdp_neighbors[(local_device.strip(),local_int.strip())] = (neighbor_device.strip(), neighbor_int.strip())
+            cdp_neighbors[(local_device.strip(),local_int.strip().replace(' ',''))] = (neighbor_device.strip(), neighbor_int.strip().replace(' ',''))
     return cdp_neighbors
             
     
