@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 '''
 Задание 18.1
@@ -78,20 +79,74 @@ $ python add_data.py
 
 import sqlite3
 import os
-
+import re
+import yaml
+from yaml.loader import SafeLoader
   
-def creat_db_scheme(db):
-    if not os.path.exists(db):
+def create_db_scheme(conn, db, f_exist, scheme):
+    if not f_exist:
         print('Создаю базу данных...')
+        with open(scheme) as f:
+            conn.executescript(f.read())
     else:
+        print('База данных существует')
         
-        
+
+def get_switches_info(filename):
+    with open(filename) as yaml_f:
+        return yaml.load(yaml_f, Loader=SafeLoader)
+
+
+def parse_snooping_output(text):
+    return re.findall('(\S+) +(\S+).*dhcp-snooping +(\d+) +(\S+)', text)
+
+
+def parse_snooping_tables(snooping_list):
+    big_snooping_list = []
+    for snooping in snooping_list:
+        hostname, *_ = snooping.split('_')
+        with open (snooping) as f:
+            parse_result_list = parse_snooping_output(f.read())
+        for snoop_tuple in parse_result_list:
+            snoop_list = list(snoop_tuple)
+            snoop_list.append(hostname)
+            big_snooping_list.append(snoop_list)
+    return big_snooping_list
+                  
+
+def add_info_switches_db(conn, devices_dict):
+    query = 'INSERT into switches values (?,?)'
+    for key, value in devices_dict.items():
+        for hostname, location in value.items():
+            line = (hostname, location)
+            try:
+                print('Добавляю данные в таблицу switches...')
+                with conn:
+                    conn.execute(query, line)
+            except sqlite3.IntegrityError as error:
+                print(f'При добавлении данных {line} возникла ошибка', error)
     
 
+def add_info_dhcp_db(conn, snoop_list):
+    query = 'INSERT into dhcp values (?,?,?,?,?)'
+    for line in snoop_list:
+            try:
+                print('Добавляю данные в таблицу dhcp...')
+                with conn:
+                    conn.execute(query, line)
+            except sqlite3.IntegrityError as error:
+                print(f'При добавлении данных {line} возникла ошибка', error)
 
 
-if '__name__' == '_main__':
+if __name__ == '__main__':
     dbname = 'dhcp_snooping.db'
+    scheme_name = 'dhcp_snooping_schema.sql'
+    switches_info = 'switches.yml'
+    dhcp_files_list=['sw1_dhcp_snooping.txt', 'sw2_dhcp_snooping.txt', 'sw3_dhcp_snooping.txt']
+    file_exist = os.path.exists(dbname)
     conn_session = sqlite3.connect(dbname)
-    create_db_scheme(dbname)
-    
+    create_db_scheme(conn_session, dbname, file_exist, scheme_name)
+    switches_dict = get_switches_info(switches_info)
+    add_info_switches_db(conn_session, switches_dict)
+    snooping_list = parse_snooping_tables(dhcp_files_list)
+    add_info_dhcp_db(conn_session, snooping_list)
