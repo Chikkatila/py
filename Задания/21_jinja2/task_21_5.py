@@ -25,11 +25,31 @@ cisco_vpn_1.txt и cisco_vpn_2.txt.
 cisco_vpn_1.txt и cisco_vpn_2.txt.
 '''
 
-data = {
-    'tun_num': 10,
-    'wan_ip_1': '192.168.100.1',
-    'wan_ip_2': '192.168.100.2',
-    'tun_ip_1': '10.0.1.1 255.255.255.252',
-    'tun_ip_2': '10.0.1.2 255.255.255.252'
-}
+import sys
+import os
+import yaml
+import json
+import jinja2
 
+
+def create_vpn_config(template, dictionary):
+    template_dir, template_file = os.path.split(template)
+    env = jinja2.Environment(
+        loader = jinja2.FileSystemLoader(template_dir),
+        trim_blocks = True,
+        lstrip_blocks = True)
+    template = env.get_template(template_file)
+    return template.render(dictionary)
+
+if __name__ == '__main__':
+    data = {
+        'tun_num': 10,
+        'wan_ip_1': '192.168.100.1',
+        'wan_ip_2': '192.168.100.2',
+        'tun_ip_1': '10.0.1.1 255.255.255.252',
+        'tun_ip_2': '10.0.1.2 255.255.255.252'
+    }
+    template_list = ['gre_ipsec_vpn_1.txt', 'gre_ipsec_vpn_2.txt']
+    for ipsec_template in template_list:
+        print(create_vpn_config(f'templates/{ipsec_template}', data))
+        print('=='*20)
