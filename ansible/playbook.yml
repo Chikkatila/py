@@ -1,0 +1,9 @@
+---
+
+- name: Run show clock on routers
+  hosts: cisco-routers
+  gather_facts: false
+
+  tasks:
+    - name: run show clock
+      raw: sh clock
